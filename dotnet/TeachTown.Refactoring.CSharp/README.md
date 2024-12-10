@@ -1,4 +1,4 @@
-# TeachTown DOTNET Refactoring Exercise
+# TeachTown .NET Refactoring Exercise
 This repository contains a simple hotel reservation library that is in need of refactoring.  
 The library is used by a client application to create a hotel reservation.  
 
