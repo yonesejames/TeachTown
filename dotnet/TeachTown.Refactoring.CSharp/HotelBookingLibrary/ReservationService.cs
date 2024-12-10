@@ -3,7 +3,7 @@
     public class ReservationService
     {
 
-        public long AddReservation(Reservation reservashin)
+        public long BookReservation(Reservation reservashin)
         {
             ArgumentNullException.ThrowIfNull(reservashin);
 
