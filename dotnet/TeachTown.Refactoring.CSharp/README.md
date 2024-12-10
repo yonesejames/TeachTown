@@ -8,5 +8,5 @@ The library is used by a client application to create a hotel reservation.
 2. Apply your knowledge of SOLID design principles and OO design patterns to refactor the TeachTown.Refactoring.CSharp.HotelReservationLibrary project.
 
 ## Restrictions
-1. DO NOT modify theTeachTown.Refactoring.CSharp.HotelReservationClient project. All refactorings to the HotelReservationLibrary project should be backwards compatible with the client.
+1. DO NOT modify the TeachTown.Refactoring.CSharp.HotelReservationClient project. All refactorings to the HotelReservationLibrary project should be backwards compatible with the client.
 2. DO NOT remove the static modifier from the ReservationDb class.  
