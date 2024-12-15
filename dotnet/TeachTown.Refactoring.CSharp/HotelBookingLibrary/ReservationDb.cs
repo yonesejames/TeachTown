@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using Microsoft.Extensions.Configuration;
+using Npgsql;
 
 namespace HotelReservationLibrary
 {
@@ -6,22 +7,40 @@ namespace HotelReservationLibrary
     {
         public static long AddReservation(Reservation reservation)
         {
-            using (var connection = new SqlConnection("ConnectionString"))
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .Build();
+
+            var dbUsername = configuration["Database:Username"];
+            var dbPassword = configuration["Database:Password"];
+            
+            using (var connection = new NpgsqlConnection($"Host=localhost; Port=5432; Database=TeachTown; Username={dbUsername}; Password={dbPassword}"))
             {
                 connection.Open();
                 // Add reservation to database
                 var command = connection.CreateCommand();
                 command.CommandText = "INSERT INTO Reservations (GuestFirstName, GuestLastName, GuestEmail, CheckInDate, CheckOutDate, NumberOfAdditionalGuests, RoomType, SmokingOrNonSmoking, Total) " +
-                    "VALUES (@GuestFirstName, @GuestLastName, @GuestEmail, @CheckInDate, @CheckOutDate, @NumberOfAdditionalGuests, @RoomType, @SmokingOrNonSmoking, @Total)";
-                command.Parameters.AddWithValue("@GuestFirstName", reservation.GuestFirstName);
-                command.Parameters.AddWithValue("@GuestLastName", reservation.GuestLastName);
-                command.Parameters.AddWithValue("@GuestEmail", reservation.guestEmail);
-                command.Parameters.AddWithValue("@CheckInDate", reservation.CheckInDate);
-                command.Parameters.AddWithValue("@CheckOutDate", reservation.CheckOutDate);
-                command.Parameters.AddWithValue("@NumberOfAdditionalGuests", reservation.NumberOfAdditionalGuests);
-                command.Parameters.AddWithValue("@RoomType", reservation.RoomType);
-                command.Parameters.AddWithValue("@SmokingOrNonSmoking", reservation.SmokingOrNonSmoking);
-                command.Parameters.AddWithValue("@Total", reservation.Total);
+                                      "VALUES (@GuestFirstName, @GuestLastName, @GuestEmail, @CheckInDate, @CheckOutDate, @NumberOfAdditionalGuests, @RoomType, @SmokingOrNonSmoking, @Total)";
+                    
+                var parameters = new Dictionary<string, object>
+                {
+                    { "@GuestFirstName", reservation.GuestFirstName },
+                    { "@GuestLastName", reservation.GuestLastName },
+                    { "@GuestEmail", reservation.guestEmail },
+                    { "@CheckInDate", reservation.CheckInDate },
+                    { "@CheckOutDate", reservation.CheckOutDate },
+                    { "@NumberOfAdditionalGuests", reservation.NumberOfAdditionalGuests },
+                    { "@RoomType", reservation.RoomType },
+                    { "@SmokingOrNonSmoking", reservation.SmokingOrNonSmoking },
+                    { "@Total", reservation.Total }
+                };
+                    
+                foreach (var param in parameters)
+                {
+                    command.Parameters.AddWithValue(param.Key, param.Value);
+                }
+                    
                 command.ExecuteNonQuery();
             }
 
